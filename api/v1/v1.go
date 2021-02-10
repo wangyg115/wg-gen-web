@@ -6,6 +6,7 @@ import (
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/api/v1/client"
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/api/v1/server"
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/api/v1/status"
+	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/wgapi"
 )
 
 // ApplyRoutes apply routes to gin router
@@ -15,7 +16,11 @@ func ApplyRoutes(r *gin.RouterGroup, private bool) {
 		if private {
 			client.ApplyRoutes(v1)
 			server.ApplyRoutes(v1)
-			status.ApplyRoutes(v1)
+			if wgapi.Enabeled() {
+				wgapi.ApplyRoutes(v1)
+			} else {
+				status.ApplyRoutes(v1)
+			}
 		} else {
 			auth.ApplyRoutes(v1)
 		}

@@ -1,7 +1,15 @@
 package core
 
 import (
+	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"time"
+
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
@@ -11,12 +19,6 @@ import (
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/util"
 	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 	"gopkg.in/gomail.v2"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"sort"
-	"strconv"
-	"time"
 )
 
 // CreateClient client with all necessary data
@@ -277,4 +279,32 @@ func EmailClient(id string) error {
 	}
 
 	return nil
+}
+
+// UpdatePeer add a client peer when config is enabeled.
+func UpdatePeer(peer model.Peer, enable bool) (*model.Resp, error) {
+	method := "RemovePeer"
+	if enable {
+		method = "AddPeer"
+	}
+
+	pj, err := json.Marshal(peer)
+	if err != nil {
+		return nil, err
+	}
+	data, err := fetchWireGuardAPI(apiRequest{
+		Version: "2.0",
+		Method:  method,
+		Params:  pj,
+	})
+	if err != nil {
+		return nil, err
+	}
+	ok := false
+	if data.Result != nil {
+		resultData := data.Result.(map[string]interface{})
+		ok = resultData["ok"].(bool)
+	}
+	return &model.Resp{OK: ok}, nil
+
 }

@@ -1,14 +1,16 @@
 package client
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/auth"
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/core"
 	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/model"
+	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/wgapi"
 	"golang.org/x/oauth2"
-	"net/http"
 )
 
 // ApplyRoutes applies router to gin Router
@@ -112,7 +114,15 @@ func updateClient(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-
+	peer := model.Peer{
+		PublicKey:    client.PublicKey,
+		PresharedKey: client.PresharedKey,
+		AllowedIPs:   client.Address,
+	}
+	_, err = wgapi.UpdatePeer(peer, client.Enable)
+	if err != nil {
+		log.Error(err)
+	}
 	c.JSON(http.StatusOK, client)
 }
 

@@ -2,8 +2,9 @@ package model
 
 import (
 	"fmt"
-	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/util"
 	"time"
+
+	"gitlab.127-0-0-1.fr/vx3r/wg-gen-web/util"
 )
 
 // Client structure
@@ -23,6 +24,13 @@ type Client struct {
 	UpdatedBy                 string    `json:"updatedBy"`
 	Created                   time.Time `json:"created"`
 	Updated                   time.Time `json:"updated"`
+}
+
+//Peer is simple celient struct to call addpeer api
+type Peer struct {
+	PublicKey    string   `json:"public_key"`
+	PresharedKey string   `json:"preshared_key"`
+	AllowedIPs   []string `json:"allowed_ips"`
 }
 
 // IsValid check if model is valid

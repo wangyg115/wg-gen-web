@@ -5,10 +5,10 @@ import TokenService from "../services/token.service";
 
 Vue.use(VueAxios, axios);
 
-let baseUrl = "/api/v1.0";
-if (process.env.NODE_ENV === "development"){
-  baseUrl = process.env.VUE_APP_API_BASE_URL;
-}
+let baseUrl = "http://localhost:8080/api/v1.0";
+// if (process.env.NODE_ENV === "development"){
+//   baseUrl = process.env.VUE_APP_API_BASE_URL;
+// }
 
 Vue.axios.defaults.baseURL = baseUrl;
 
